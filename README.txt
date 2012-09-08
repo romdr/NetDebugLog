@@ -11,7 +11,7 @@ Example:
 
 int main(int argc, char* argv[])
 {
-  static int delay = 33;
+	static int delay = 33;
 
 	// Those are default
 	//SetNetLogIPAddress("127.0.0.1");
