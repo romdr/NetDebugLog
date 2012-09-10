@@ -36,3 +36,7 @@ int main(int argc, char* argv[])
 
 Romain Dura
 http://www.shazbits.com/netdebuglog
+
+<script src="//static.getclicky.com/js" type="text/javascript"></script>
+<script type="text/javascript">try{ clicky.init(66632103); }catch(e){}</script>
+<noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/66632103ns.gif" /></p></noscript>
