@@ -26,7 +26,10 @@
 
 #include "NetDebugLog/NetDebugLog.h"
 
-int _tmain(int argc, _TCHAR* argv[])
+#pragma warning(push)
+#pragma warning(disable: 4127)
+
+int _tmain(int, _TCHAR*)
 {
 	const int testMode = 0;
 	static int delay = 33;
@@ -41,10 +44,9 @@ int _tmain(int argc, _TCHAR* argv[])
 		srand(0);
 		while (true)
 		{
-			int val = rand() % 25;
-			val *= (rand() % 2 == 0 ? 1 : -1);
-			NetLog((float)val);
-			NetLog("test", (float)val + (rand() % 25));
+			float val = (float)((rand() % 25) * ((rand() % 2) == 0 ? 1 : -1));
+			NetLog(val);
+			NetLog("test", val + (float)(rand() % 25));
 			Sleep(delay);
 		}
 	}
@@ -67,3 +69,5 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	return 0;
 }
+
+#pragma warning(pop)

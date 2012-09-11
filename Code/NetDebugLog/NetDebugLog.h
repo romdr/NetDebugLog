@@ -37,7 +37,7 @@
 */
 
 void SetNetLogIPAddress(char* hostname);
-void SetNetLogPort(int port);
+void SetNetLogPort(unsigned short port);
 void SetNetLogEnabled(bool enabled);
 
 /*
@@ -61,7 +61,7 @@ public:
 	~TCPClient();
 
 	void Destroy();
-	bool Connect(const char* hostname, int port);
+	bool Connect(const char* hostname, unsigned short port);
 	bool Send(const char* data, unsigned int size);
 	bool IsConnected() const { return m_Connected; }
 

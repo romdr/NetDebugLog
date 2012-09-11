@@ -32,7 +32,7 @@
 */
 
 static char* NetLogIPAddress = "127.0.0.1";
-static int NetLogPort = 13000;
+static unsigned short NetLogPort = 13000;
 static bool NetLogEnabled = true;
 
 void SetNetLogIPAddress(char* ipAddress)
@@ -40,7 +40,7 @@ void SetNetLogIPAddress(char* ipAddress)
 	NetLogIPAddress = ipAddress;
 }
 
-void SetNetLogPort(int port)
+void SetNetLogPort(unsigned short port)
 {
 	NetLogPort = port;
 }
@@ -146,7 +146,7 @@ void NetLog(const char* name, double timeVal, double yVal)
 */
 
 TCPClient::TCPClient()
-: m_Socket(-1)
+: m_Socket(INVALID_SOCKET)
 , EnableErrorLog(true)
 , EnableMessageLog(false)
 , m_Connected(false)
@@ -171,7 +171,7 @@ bool TCPClient::Create()
 	}
 
 	m_Socket = socket(AF_INET, SOCK_STREAM, 0);
-	if (m_Socket == -1)
+	if (m_Socket == INVALID_SOCKET)
 	{
 		if (EnableErrorLog)
 			printf("TCPClient error: Could not initialize socket. Code %d.\n", WSAGetLastError());
@@ -183,15 +183,15 @@ bool TCPClient::Create()
 
 void TCPClient::Destroy()
 {
-	if (m_Socket != -1)
+	if (m_Socket != INVALID_SOCKET)
 	{
 		closesocket(m_Socket);
-		m_Socket = -1;
+		m_Socket = INVALID_SOCKET;
 		m_Connected = false;
 	}
 }
 
-bool TCPClient::Connect(const char* hostname, int port)
+bool TCPClient::Connect(const char* hostname, unsigned short port)
 {
 	if (Create())
 	{
