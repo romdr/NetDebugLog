@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="NetDebugLogLib"
+	Name="NetDebugLog"
 	ProjectGUID="{B10E1181-27F5-436D-A52B-36BC377E721B}"
 	RootNamespace="NetDebugLogLib"
 	Keyword="Win32Proj"
