@@ -1,7 +1,7 @@
 NetDebugLog
 ===========
 
-NetDebugLog is an open source C++ client for NetDebugPlot (http://www.shazbits.com/netdebugplot). There are 1 .cpp and 1 .h files to include in your project to make it all work. It consists of a TCP client, a couple configuration and logging functions. It's currently implemented with Winsock and QueryPerformanceCounter (high resolution timer) and could easily be ported to other platforms. 
+NetDebugLog is an open source C++ client for NetDebugPlot (http://www.shazbits.com/netdebugplot). There are 1 .cpp and 1 .h files to include in your project to make it all work. It consists of a TCP client, a couple configuration and logging functions. It is compatible with Windows and Linux (tested with Ubuntu 12.04).
 
 
 ## Example
