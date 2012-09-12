@@ -26,6 +26,7 @@
 #ifdef NETLOG
 #ifdef _WIN32
 	#pragma comment(lib, "wsock32.lib")
+	#pragma comment(lib, "Ws2_32.lib")
 #else
 	#pragma GCC diagnostic ignored "-Wmissing-braces"
 #endif
