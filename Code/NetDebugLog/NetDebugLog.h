@@ -27,8 +27,19 @@
 #ifdef NETLOG
 
 #include <stdio.h>
-#include <winsock2.h>
-#include <windows.h>
+#ifdef _WIN32
+	#include <winsock2.h>
+	#include <windows.h>
+#else
+	#include <unistd.h>
+	#include <arpa/inet.h>
+	#include <string.h>
+	#include <sys/time.h>
+	#define INVALID_SOCKET -1
+	#define SOCKET_ERROR -1
+	#define closesocket close
+	typedef int SOCKET;
+#endif
 #include <time.h>
 
 
@@ -71,8 +82,8 @@ public:
 protected:
 	bool Create();
 
-	SOCKET m_Socket;
 	bool m_Connected;
+	SOCKET m_Socket;
 };
 
 #else

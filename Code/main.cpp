@@ -22,14 +22,21 @@
 */
 
 #include <iostream>
-#include <tchar.h>
-
 #include "NetDebugLog/NetDebugLog.h"
 
+#ifdef _WIN32
 #pragma warning(push)
 #pragma warning(disable: 4127)
+#else
+#include <stdlib.h>
+void Sleep(int ms)
+{
+	usleep(ms * 1000);
+}
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#endif
 
-int _tmain(int, _TCHAR*)
+int main(int, char**)
 {
 	const int testMode = 0;
 	static int delay = 33;
@@ -70,4 +77,6 @@ int _tmain(int, _TCHAR*)
 	return 0;
 }
 
+#ifdef _WIN32
 #pragma warning(pop)
+#endif

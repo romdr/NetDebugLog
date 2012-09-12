@@ -67,22 +67,11 @@ gccRelease/Code/main.o: Code/main.cpp
 # Creates the intermediate and output folders for each configuration...
 .PHONY: create_folders
 create_folders:
-	mkdir -p gccDebug
-	mkdir -p gccRelease
+	mkdir -p gccDebug/Code/NetDebugLog
+	mkdir -p gccRelease/Code/NetDebugLog
 
 # Cleans intermediate and output files (objects, libraries, executables)...
 .PHONY: clean
 clean:
-	rm -f gccDebug/*.o
-	rm -f gccDebug/*.d
-	rm -f gccDebug/*.a
-	rm -f gccDebug/*.so
-	rm -f gccDebug/*.dll
-	rm -f gccDebug/*.exe
-	rm -f gccRelease/*.o
-	rm -f gccRelease/*.d
-	rm -f gccRelease/*.a
-	rm -f gccRelease/*.so
-	rm -f gccRelease/*.dll
-	rm -f gccRelease/*.exe
-
+	rm -rf gccDebug
+	rm -rf gccRelease

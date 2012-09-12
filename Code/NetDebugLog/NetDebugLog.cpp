@@ -24,14 +24,18 @@
 #include "NetDebugLog.h"
 
 #ifdef NETLOG
-#pragma comment(lib, "wsock32.lib")
+#ifdef _WIN32
+	#pragma comment(lib, "wsock32.lib")
+#else
+	#pragma GCC diagnostic ignored "-Wmissing-braces"
+#endif
 
 
 /*
 ** Configuration
 */
 
-static char* NetLogIPAddress = "127.0.0.1";
+static const char* NetLogIPAddress = "127.0.0.1";
 static unsigned short NetLogPort = 13000;
 static bool NetLogEnabled = true;
 
@@ -64,6 +68,45 @@ struct NetLogPacket
 	double x;
 	double y;
 };
+
+#ifdef _WIN32
+static void PrintError(const char* msg)
+{
+	printf("%s: Code %d.\n", msg, WSAGetLastError());
+}
+
+#else
+
+static void PrintError(const char* msg)
+{
+	perror(msg);
+}
+
+typedef union _LARGE_INTEGER
+{
+	struct
+	{
+		unsigned int LowPart;
+		int HighPart;
+	} u;
+	long long QuadPart;
+} LARGE_INTEGER;
+
+bool QueryPerformanceCounter(LARGE_INTEGER *lpPerformanceCount)
+{
+	struct timeval t;
+
+	gettimeofday(&t, NULL);
+	lpPerformanceCount->QuadPart = t.tv_usec + t.tv_sec * 1000000;
+	return true;
+}
+
+bool QueryPerformanceFrequency(LARGE_INTEGER *lpFrequency)
+{
+	lpFrequency->QuadPart = 1000000;
+	return true;
+}
+#endif
 
 static double NetLogGetHiResTime()
 {
@@ -112,8 +155,10 @@ void NetLog(const char* name, double yVal)
 
 // Disable warning 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead.
 // sprintf_s adds non zero characters after the \0, sprintf doesn't
-#pragma warning(push)
-#pragma warning(disable: 4996)
+#ifdef _WIN32
+	#pragma warning(push)
+	#pragma warning(disable: 4996)
+#endif
 
 void NetLog(const char* name, double timeVal, double yVal)
 {
@@ -139,17 +184,20 @@ void NetLog(const char* name, double timeVal, double yVal)
 	}
 }
 
-#pragma warning(pop)
+#ifdef _WIN32
+	#pragma warning(pop)
+#endif
+
 
 /*
 ** TCP Client
 */
 
 TCPClient::TCPClient()
-: m_Socket(INVALID_SOCKET)
-, EnableErrorLog(true)
+: EnableErrorLog(true)
 , EnableMessageLog(false)
 , m_Connected(false)
+, m_Socket(INVALID_SOCKET)
 {
 }
 
@@ -160,21 +208,23 @@ TCPClient::~TCPClient()
 
 bool TCPClient::Create()
 {
+#ifdef _WIN32
 	WSADATA wsaData;
 	const unsigned short wVersionRequested = MAKEWORD( 2, 2 );
 	const int err = WSAStartup(wVersionRequested, &wsaData);
 	if (err || (LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2))
 	{
 		if (EnableErrorLog)
-			printf("TCPClient error: Could not find useable sock dll. Code %d.\n", WSAGetLastError());
+			PrintError("TCPClient error: Could not find useable sock dll");
 		return false;
 	}
+#endif
 
 	m_Socket = socket(AF_INET, SOCK_STREAM, 0);
 	if (m_Socket == INVALID_SOCKET)
 	{
 		if (EnableErrorLog)
-			printf("TCPClient error: Could not initialize socket. Code %d.\n", WSAGetLastError());
+			PrintError("TCPClient error: Could not initialize socket");
 		return false;
 	}
 
@@ -198,8 +248,13 @@ bool TCPClient::Connect(const char* hostname, unsigned short port)
 		struct sockaddr_in addr;
 		addr.sin_family = AF_INET ;
 		addr.sin_port = htons(port);
-		memset(&(addr.sin_zero), 0, 8);
-		addr.sin_addr.s_addr = inet_addr(hostname);
+		memset(&addr.sin_zero, 0, sizeof(addr.sin_zero));
+
+		if (inet_pton(AF_INET, hostname, &addr.sin_addr) == 0)
+		{
+			if (EnableErrorLog)
+				PrintError("TCPClient: Bad address");
+		}
 
 		if (connect(m_Socket, (struct sockaddr*)&addr, sizeof(addr)) != SOCKET_ERROR)
 		{
@@ -210,7 +265,7 @@ bool TCPClient::Connect(const char* hostname, unsigned short port)
 		}
 
 		if (EnableErrorLog)
-			printf("TCPClient error: Could not connect to %s:%d. Code %d.\n", hostname, port, WSAGetLastError());
+			PrintError("TCPClient error: Could not connect");
 	}
 
 	Destroy();
@@ -228,7 +283,7 @@ bool TCPClient::Send(const char* data, unsigned int size)
 		if (sentBytes == SOCKET_ERROR)
 		{
 			if (EnableErrorLog)
-				fprintf(stderr, "TCPClient error: Could not send data. Code %d.\n", WSAGetLastError());
+				PrintError("TCPClient error: Could not send data");
 			m_Connected = false;
 			return false;
 		}
