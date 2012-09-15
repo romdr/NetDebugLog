@@ -46,3 +46,5 @@ https://github.com/shazbits/NetDebugLog/blob/master/LICENSE.txt
 
 Romain Dura
 http://www.shazbits.com/netdebuglog
+
+![viewcounter](http://www.shazbits.com/viewcounter.png)
