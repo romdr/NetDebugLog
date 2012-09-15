@@ -46,5 +46,3 @@ https://github.com/shazbits/NetDebugLog/blob/master/LICENSE.txt
 
 Romain Dura
 http://www.shazbits.com/netdebuglog
-
-![clickystats](http://in.getclicky.com/66632103ns.gif)
