@@ -247,11 +247,16 @@ bool TCPClient::Connect(const char* hostname, unsigned short port)
 	if (Create())
 	{
 		struct sockaddr_in addr;
+		memset(&addr.sin_zero, 0, sizeof(addr.sin_zero));
 		addr.sin_family = AF_INET ;
 		addr.sin_port = htons(port);
-		memset(&addr.sin_zero, 0, sizeof(addr.sin_zero));
 
+#if (!defined(NTDDI_LONGHORN) || (defined(_WIN32) && NTDDI_VERSION < NTDDI_LONGHORN))
+		addr.sin_addr.s_addr = inet_addr(hostname);
+		if (addr.sin_addr.s_addr == INADDR_NONE)
+#else
 		if (inet_pton(AF_INET, hostname, &addr.sin_addr) == 0)
+#endif
 		{
 			if (EnableErrorLog)
 				PrintError("TCPClient: Bad address");
